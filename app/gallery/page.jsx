@@ -37,9 +37,11 @@ const Gallery = () => {
   
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [draggedImage, setDraggedImage] = useState(null);
 
   const handleDragStart = (e, index) => {
     e.dataTransfer.setData('index', index);
+    setDraggedImage(index);
   };
 
   const handleDragOver = (e) => {
@@ -47,11 +49,32 @@ const Gallery = () => {
   };
 
   const handleDrop = (e, targetIndex) => {
-    const sourceIndex = e.dataTransfer.getData('index');
-    const newImages = [...images];
-    const [draggedImage] = newImages.splice(sourceIndex, 1);
-    newImages.splice(targetIndex, 0, draggedImage);
-    setImages(newImages);
+    if (draggedImage !== null) {
+      const sourceIndex = e.dataTransfer.getData('index');
+      const newImages = [...images];
+      const [draggedImageObj] = newImages.splice(sourceIndex, 1);
+      newImages.splice(targetIndex, 0, draggedImageObj);
+      setImages(newImages);
+      setDraggedImage(null);
+    }
+  };
+
+  const handleTouchStart = (index) => {
+    setDraggedImage(index);
+  };
+
+  const handleTouchMove = (e) => {
+    e.preventDefault();
+  };
+
+  const handleTouchEnd = (targetIndex) => {
+    if (draggedImage !== null) {
+      const newImages = [...images];
+      const [draggedImageObj] = newImages.splice(draggedImage, 1);
+      newImages.splice(targetIndex, 0, draggedImageObj);
+      setImages(newImages);
+      setDraggedImage(null);
+    }
   };
 
   const handleSearch = (e) => {
@@ -87,6 +110,9 @@ const Gallery = () => {
               onDragStart={(e) => handleDragStart(e, index)}
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, index)}
+              onTouchStart={() => handleTouchStart(index)}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={() => handleTouchEnd(index)}
             >
               <Image width={'100%'} height={'100%'} src={image.src} alt={`Image ${index}`} />
               <div className={'tags'}>
