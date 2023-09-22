@@ -13,6 +13,7 @@ import img7 from '@/public/assets/7.jpg'
 import img8 from '@/public/assets/8.jpg'
 import img9 from '@/public/assets/9.jpg'
 import img10 from '@/public/assets/10.jpg'
+import Script from 'next/script'
 const Gallery = () => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,23 +60,6 @@ const Gallery = () => {
     }
   };
 
-  const handleTouchStart = (index) => {
-    setDraggedImage(index);
-  };
-
-  const handleTouchMove = (e) => {
-    e.preventDefault();
-  };
-
-  const handleTouchEnd = (targetIndex) => {
-    if (draggedImage !== null) {
-      const newImages = [...images];
-      const [draggedImageObj] = newImages.splice(draggedImage, 1);
-      newImages.splice(targetIndex, 0, draggedImageObj);
-      setImages(newImages);
-      setDraggedImage(null);
-    }
-  };
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -110,9 +94,7 @@ const Gallery = () => {
               onDragStart={(e) => handleDragStart(e, index)}
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, index)}
-              onTouchStart={() => handleTouchStart(index)}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={() => handleTouchEnd(index)}
+              
             >
               <Image width={'100%'} height={'100%'} src={image.src} alt={`Image ${index}`} />
               <div className={'tags'}>
@@ -126,6 +108,11 @@ const Gallery = () => {
           ))}
         </div>
       )}
+      <Script
+        id="DragDropTouch" src="https://bernardo-castilho.github.io/DragDropTouch/DragDropTouch.js"
+        strategy="lazyOnload"
+        onLoad={() => console.log('Script loaded')}
+      />
     </div>
   )
 }
